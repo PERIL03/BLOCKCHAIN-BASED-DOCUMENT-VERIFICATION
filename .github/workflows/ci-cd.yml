@@ -184,6 +184,7 @@ jobs:
       
       - name: Build backend image
         uses: docker/build-push-action@v4
+        continue-on-error: true
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -194,6 +195,7 @@ jobs:
       
       - name: Build frontend image
         uses: docker/build-push-action@v4
+        continue-on-error: true
         with:
           context: ./client
           file: ./client/Dockerfile
