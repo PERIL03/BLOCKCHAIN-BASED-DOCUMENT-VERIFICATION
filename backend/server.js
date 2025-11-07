@@ -63,6 +63,20 @@ mongoose
     process.exit(1);
   });
 
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "Blockchain Document Verification API",
+    version: "1.0.0",
+    status: "running",
+    endpoints: {
+      health: "/health",
+      api: "/api",
+      documentation: "/api"
+    }
+  });
+});
+
 app.get("/health", (req, res) => {
   const healthCheck = {
     status: "ok",
