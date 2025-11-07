@@ -8,7 +8,7 @@ describe("API Endpoints", function () {
   this.timeout(40000);
 
   before(async function () {
-    const testDbUri = process.env.MONGODB_TEST_URI || "mongodb:
+    const testDbUri = process.env.MONGODB_TEST_URI || "mongodb://localhost:27017/document-verification-test";
     
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(testDbUri);
