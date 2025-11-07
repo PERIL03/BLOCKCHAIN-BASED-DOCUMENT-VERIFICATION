@@ -35,13 +35,13 @@ module.exports = {
     },
     
     localhost: {
-      url: "http:
+      url: "http://127.0.0.1:8545",
       chainId: 31337,
       timeout: 60000,
     },
     
     sepolia: {
-      url: SEPOLIA_RPC_URL || "https:
+      url: SEPOLIA_RPC_URL || "https://sepolia.infura.io/v3/",
       accounts: PRIVATE_KEY !== "0x0000000000000000000000000000000000000000000000000000000000000000" 
         ? [PRIVATE_KEY] 
         : [],
@@ -61,7 +61,7 @@ module.exports = {
     showTimeSpent: true,
     showMethodSig: true,
     token: "ETH",
-    gasPriceApi: "https:
+    gasPriceApi: "https://api.etherscan.io/api",
     excludeContracts: [],
   },
 

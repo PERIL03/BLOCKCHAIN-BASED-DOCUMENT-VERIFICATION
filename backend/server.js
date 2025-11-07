@@ -12,7 +12,7 @@ const app = express();
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http:
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
   credentials: true,
 }));
 app.use(morgan("combined"));
@@ -29,7 +29,7 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb:
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/document-verification";
 
 mongoose
   .connect(MONGODB_URI)
@@ -119,12 +119,12 @@ const HOST = process.env.HOST || "0.0.0.0";
 
 if (require.main === module) {
   const server = app.listen(PORT, HOST, () => {
-    console.log(`\n🚀 Server running on http:
+    console.log(`\n🚀 Server running on http://${HOST}:${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
     console.log(`📡 MongoDB: ${mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"}`);
     console.log(`🔗 Blockchain Network: ${process.env.BLOCKCHAIN_NETWORK || "localhost"}`);
-    console.log(`\n✨ API Documentation: http:
-    console.log(`❤️  Health Check: http:
+    console.log(`\n✨ API Documentation: http://${HOST}:${PORT}/api`);
+    console.log(`❤️  Health Check: http://${HOST}:${PORT}/health\n`);
   });
 
   process.on("SIGTERM", () => {

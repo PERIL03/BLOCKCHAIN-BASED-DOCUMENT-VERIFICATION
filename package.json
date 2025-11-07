@@ -24,11 +24,20 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "docker:restart": "docker-compose restart",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:prod:build": "docker-compose -f docker-compose.prod.yml build",
+    "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
     "setup": "chmod +x scripts/setup.sh && ./scripts/setup.sh",
     "seed": "node scripts/seed-database.js",
     "clean": "rm -rf node_modules backend/node_modules client/node_modules artifacts cache",
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "pre-deploy": "chmod +x scripts/pre-deploy-check.sh && ./scripts/pre-deploy-check.sh",
+    "deploy:vercel": "chmod +x scripts/deploy-vercel.sh && ./scripts/deploy-vercel.sh",
+    "deploy:render": "chmod +x scripts/deploy-render.sh && ./scripts/deploy-render.sh",
+    "deploy:docker": "chmod +x scripts/deploy-docker.sh && ./scripts/deploy-docker.sh",
+    "deployment:checklist": "chmod +x scripts/deployment-checklist.sh && ./scripts/deployment-checklist.sh",
+    "generate:secrets": "chmod +x scripts/generate-secrets.sh && ./scripts/generate-secrets.sh"
   },
   "keywords": [
     "blockchain",

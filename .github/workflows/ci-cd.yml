@@ -1,0 +1,249 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Test and Build Jobs
+  test-contracts:
+    name: Test Smart Contracts
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Compile contracts
+        run: npm run compile
+      
+      - name: Run contract tests
+        run: npm test
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: contract-artifacts
+          path: |
+            artifacts/
+            deployments/
+
+  test-backend:
+    name: Test Backend API
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test
+          NODE_ENV: test
+
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+      
+      - name: Run frontend tests
+        working-directory: ./client
+        run: npm test -- --watchAll=false
+        env:
+          CI: true
+      
+      - name: Build frontend
+        working-directory: ./client
+        run: npm run build
+        env:
+          REACT_APP_API_URL: https://api.example.com
+
+  # Linting and Code Quality
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install root dependencies
+        run: npm ci
+      
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+      
+      - name: Lint backend
+        working-directory: ./backend
+        run: npm run lint || true
+      
+      - name: Lint client
+        working-directory: ./client
+        run: npm run lint || true
+
+  # Security Scanning
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Run npm audit (root)
+        run: npm audit --audit-level=moderate || true
+      
+      - name: Run npm audit (backend)
+        working-directory: ./backend
+        run: npm audit --audit-level=moderate || true
+      
+      - name: Run npm audit (client)
+        working-directory: ./client
+        run: npm audit --audit-level=moderate || true
+
+  # Build Docker Images
+  build-docker:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [test-contracts, test-backend, test-frontend]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: blockchain-doc-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          push: false
+          tags: blockchain-doc-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Deploy to Production (only on main branch)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test-contracts, test-backend, test-frontend, lint, build-docker]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Deploy notification
+        run: |
+          echo "🚀 Ready to deploy to production"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+      
+      # Add your deployment steps here
+      # Example: Deploy to Vercel, Render, or your hosting platform
+      
+      # - name: Deploy Frontend to Vercel
+      #   uses: amondnet/vercel-action@v20
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     working-directory: ./client
+      
+      # - name: Deploy Backend to Render
+      #   run: |
+      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  # Notification
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [test-contracts, test-backend, test-frontend]
+    if: always()
+    
+    steps:
+      - name: Build Status
+        run: |
+          if [ "${{ needs.test-contracts.result }}" == "success" ] && \
+             [ "${{ needs.test-backend.result }}" == "success" ] && \
+             [ "${{ needs.test-frontend.result }}" == "success" ]; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Some tests failed"
+            exit 1
+          fi

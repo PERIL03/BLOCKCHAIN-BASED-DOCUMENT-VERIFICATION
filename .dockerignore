@@ -1,0 +1,41 @@
+# Docker
+node_modules/
+npm-debug.log*
+backend/node_modules/
+client/node_modules/
+.env.local
+.env.development.local
+.env.test.local
+
+# Git
+.git/
+.github/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Build artifacts
+artifacts/
+cache/
+client/build/
+
+# Test
+coverage/
+.nyc_output/
+
+# Documentation
+*.md
+docs/
+
+# Deployment configs
+deployments/*.json
+!deployments/.gitkeep

@@ -32,7 +32,7 @@ async function initializeBlockchain() {
     const abiData = JSON.parse(fs.readFileSync(abiPath, "utf8"));
     contractABI = abiData.abi;
 
-    const networkUrl = process.env.BLOCKCHAIN_RPC_URL || "http:
+    const networkUrl = process.env.BLOCKCHAIN_RPC_URL || "http://127.0.0.1:8545";
     provider = new ethers.JsonRpcProvider(networkUrl);
 
     try {
