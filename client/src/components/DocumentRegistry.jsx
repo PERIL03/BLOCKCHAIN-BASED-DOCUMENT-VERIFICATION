@@ -14,10 +14,6 @@ function DocumentRegistry() {
   });
   const [pagination, setPagination] = useState(null);
 
-  useEffect(() => {
-    loadDocuments();
-  }, [filters]);
-
   const loadDocuments = async () => {
     setIsLoading(true);
     setError(null);
@@ -32,6 +28,11 @@ function DocumentRegistry() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
