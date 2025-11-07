@@ -29,7 +29,7 @@ services:
     container_name: blockchain-doc-hardhat
     restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npx hardhat node --hostname 0.0.0.0"
+    command: sh -c "apk add --no-cache curl && npm install && npx hardhat node --hostname 0.0.0.0"
     ports:
       - "${HARDHAT_PORT:-8545}:8545"
     volumes:
@@ -40,7 +40,7 @@ services:
     environment:
       - NODE_ENV=development
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8545"]
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
       interval: 10s
       timeout: 5s
       retries: 5
