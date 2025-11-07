@@ -1,6 +1,16 @@
 # 🔐 Blockchain Document Verification System
 
-A complete, production-ready blockchain-based document verification system using Ethereum smart contracts, React, Express, and MongoDB.
+> **Production-Ready** | A full-stack decentralized application for registering and verifying documents on the Ethereum blockchain.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue.svg)](https://soliditylang.org/)
+
+## 🚀 **DEPLOYMENT READY!**
+
+This project is **fully prepared for production deployment** on Render, Vercel, Railway, or Docker.
+
+**⚠️ IMPORTANT:** Before deploying, read [`SECURITY_ALERT.md`](./SECURITY_ALERT.md) - contains critical security steps.
 
 ## 📋 Table of Contents
 
@@ -18,14 +28,16 @@ A complete, production-ready blockchain-based document verification system using
 
 ## ✨ Features
 
-- **Blockchain Integration**: Ethereum smart contracts for immutable document registry
-- **Document Upload**: Register documents on the blockchain with cryptographic hashing
-- **Document Verification**: Verify document authenticity against blockchain records
-- **Full-Text Search**: Search and filter documents by category, uploader, and status
-- **Real-time Dashboard**: View statistics and recent document activity
-- **Production-Ready**: Complete with Docker, tests, and deployment configurations
-- **Security**: Input validation, rate limiting, and secure hash verification
-- **Responsive UI**: Modern React interface with beautiful gradient design
+## ✨ Features
+
+- 🔒 **Immutable Registry**: Documents stored permanently on Ethereum blockchain
+- ✅ **Instant Verification**: Verify document authenticity in seconds
+- 🗄️ **Metadata Storage**: MongoDB for quick access to document information
+- 🌐 **RESTful API**: Complete backend API with Express.js
+- ⚛️ **Modern UI**: Responsive React frontend with intuitive design
+- 🔐 **Security First**: Helmet.js, CORS, rate limiting, input validation
+- 🐳 **Docker Ready**: Full Docker support for easy deployment
+- 📊 **Production Ready**: Comprehensive monitoring, error handling, and logging
 
 ## 🛠 Tech Stack
 
@@ -68,46 +80,20 @@ docker --version
 docker-compose --version
 ```
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Local Development)
 
-### Option 1: Automated Setup (Recommended)
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd blockchain-doc-verify
-
-# Run the automated setup script
-npm run setup
-```
-
-The setup script will:
-1. Install all dependencies
-2. Compile smart contracts
-3. Start a local Hardhat blockchain
-4. Deploy contracts
-5. Optionally seed the database
-
-### Option 2: Manual Setup
-
-#### 1. Install Dependencies
+### 1. Install Dependencies
 
 ```bash
-# Install root dependencies
-npm install
+# Clone repository
+git clone https://github.com/PERIL03/BLOCKCHAIN-BASED-DOCUMENT-VERIFICATION.git
+cd BLOCKCHAIN-BASED-DOCUMENT-VERIFICATION
 
-# Install backend dependencies
-cd backend
-npm install
-cd ..
-
-# Install client dependencies
-cd client
-npm install
-cd ..
+# Install all dependencies
+npm run install:all
 ```
 
-#### 2. Configure Environment
+### 2. Configure Environment
 
 ```bash
 # Copy the example environment file
@@ -131,37 +117,67 @@ npm run node
 
 #### 5. Deploy Smart Contracts
 
+### 3. Start Local Blockchain
+
 ```bash
-# In another terminal
+# Terminal 1 - Start Hardhat node
+npm run node
+```
+
+### 4. Deploy Smart Contract
+
+```bash
+# Terminal 2 - Deploy contract
 npm run deploy
 ```
 
-#### 6. Start Backend Server
+### 5. Start Backend
 
 ```bash
-# In another terminal
-npm run backend
+# Terminal 3 - Start backend server
+npm run backend:dev
 ```
 
-#### 7. Start Frontend Application
+### 6. Start Frontend
 
 ```bash
-# In another terminal
+# Terminal 4 - Start React app
 npm run client
 ```
 
-### Option 3: Docker Deployment
+Visit: http://localhost:3000
+
+---
+
+## 🌐 **Production Deployment**
+
+### **Deploy to Render (Recommended)**
+
+Complete guide: **[RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)**
 
 ```bash
-# Build and start all services
-docker-compose up -d
+# 1. Complete security fixes
+cat SECURITY_ALERT.md
 
-# View logs
-docker-compose logs -f
+# 2. Deploy contract to Sepolia
+npm run deploy:sepolia
 
-# Stop all services
-docker-compose down
+# 3. Push to GitHub
+git push origin main
+
+# 4. Deploy on Render
+# Follow RENDER_DEPLOYMENT.md
 ```
+
+**Time to deploy: ~90 minutes**
+
+### **Other Platforms**
+
+- **Vercel + Render**: See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
+- **Railway**: See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
+- **Docker**: `npm run docker:prod`
+
+---
 
 ## 📁 Project Structure
 

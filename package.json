@@ -37,7 +37,12 @@
     "deploy:render": "chmod +x scripts/deploy-render.sh && ./scripts/deploy-render.sh",
     "deploy:docker": "chmod +x scripts/deploy-docker.sh && ./scripts/deploy-docker.sh",
     "deployment:checklist": "chmod +x scripts/deployment-checklist.sh && ./scripts/deployment-checklist.sh",
-    "generate:secrets": "chmod +x scripts/generate-secrets.sh && ./scripts/generate-secrets.sh"
+    "generate:secrets": "chmod +x scripts/generate-secrets.sh && ./scripts/generate-secrets.sh",
+    "security:fix": "chmod +x scripts/remove-env-from-git.sh && ./scripts/remove-env-from-git.sh",
+    "install:client": "cd client && npm install",
+    "install:backend": "cd backend && npm install",
+    "prepare:deploy": "chmod +x scripts/prepare-deployment.sh && ./scripts/prepare-deployment.sh",
+    "build:all": "npm run compile && cd client && npm run build && cd .."
   },
   "keywords": [
     "blockchain",

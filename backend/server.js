@@ -11,20 +11,42 @@ const documentRoutes = require("./routes/documents");
 const app = express();
 
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+// Configure CORS for production
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.CLIENT_URL 
+      ? process.env.CLIENT_URL.split(',').map(url => url.trim())
+      : ['http://localhost:3000', 'http://localhost:3001'];
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(morgan("combined"));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.RATE_LIMIT_MAX || 100,
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // Skip rate limiting for health checks
+    return req.path === '/health';
+  },
 });
 
 app.use("/api", limiter);
