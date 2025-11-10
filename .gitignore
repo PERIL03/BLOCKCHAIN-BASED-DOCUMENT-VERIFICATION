@@ -47,6 +47,15 @@ deployments/
 logs/
 *.log
 
+# Build artifacts
+client/build/
+client/.vercel/
+.vercel/
+
+# Temp files
+.hardhat-node.pid
+*.tmp
+
 # OS
 .DS_Store
 Thumbs.db
