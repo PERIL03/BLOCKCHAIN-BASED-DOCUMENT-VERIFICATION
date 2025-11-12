@@ -1,6 +1,7 @@
 const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 let contractConfig;
 let contractABI;
@@ -77,6 +78,21 @@ async function initializeBlockchain() {
  */
 async function registerDocumentOnBlockchain(fileHash, metadata) {
   try {
+    // If simulation mode is enabled, return a fake successful result so uploads can be tested
+    if (process.env.SIMULATE_BLOCKCHAIN === "true") {
+      const documentHash = "0x" + fileHash;
+      const fakeTxHash = "0x" + crypto.createHash("sha256").update(documentHash + Date.now()).digest("hex");
+      console.log("⚠️  SIMULATE_BLOCKCHAIN enabled — returning simulated transaction result");
+      return {
+        success: true,
+        documentHash: documentHash,
+        transactionHash: fakeTxHash,
+        blockNumber: 0,
+        gasUsed: "0",
+        network: "simulated",
+      };
+    }
+
     if (!contract) {
       await initializeBlockchain();
     }
