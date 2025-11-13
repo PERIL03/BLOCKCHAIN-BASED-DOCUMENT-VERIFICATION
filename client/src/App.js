@@ -17,7 +17,7 @@ function App() {
   const loadStats = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/documents/stats/overview`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents/stats/overview`);
       const data = await response.json();
       if (data.success) {
         setStats(data.statistics);
